@@ -1,4 +1,8 @@
+from collections import namedtuple
+
+
 TERM_TERMINATOR = True
+Match = namedtuple('Matches', 'start end word')
 
 
 def build_trie(terms, term_terminator=TERM_TERMINATOR):
@@ -28,11 +32,12 @@ def search_for_terms(terms, doc, term_terminator=TERM_TERMINATOR):
             start, end = i - len(word_match) + 1, i
             is_partial = False
             if matches:
-                last_start, last_end, _ = matches[-1]
-                is_partial = (start > last_start and start < last_end)
+                last_match = matches[-1]
+                is_partial = (start > last_match.start and start < last_match.end)
 
             if not is_partial:
-                matches.append((start, end, word_match))
+                m = Match(start, end, word_match)
+                matches.append(m)
 
 
         if i + 1 < n - 1 and doc[i + 1] in current_node:
@@ -90,10 +95,12 @@ if __name__ == "__main__":
     matches = search_for_terms(terms, doc)
 
 
+    # Simple test to ensure bounds of words are calculated properly.
+    for match in matches:
+        start, end, word = match
+        assert doc[start:end + 1] == word
+
 
     from pprint import PrettyPrinter
-
     pp = PrettyPrinter()
-
     pp.pprint(matches)
-    breakpoint()
