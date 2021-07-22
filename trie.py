@@ -2,7 +2,7 @@ from collections import namedtuple
 
 
 TERM_TERMINATOR = True
-Match = namedtuple('Matches', 'start end word')
+Match = namedtuple("Matches", "start end word")
 
 
 def build_trie(terms, term_terminator=TERM_TERMINATOR):
@@ -33,28 +33,20 @@ def search_for_terms(terms, doc, term_terminator=TERM_TERMINATOR):
             is_partial = False
             if matches:
                 last_match = matches[-1]
-                is_partial = (start > last_match.start and start < last_match.end)
+                is_partial = start > last_match.start and start < last_match.end
 
             if not is_partial:
                 m = Match(start, end, word_match)
                 matches.append(m)
 
-
         if i + 1 < n - 1 and doc[i + 1] in current_node:
             backtracking(i + 1, current_node)
-
 
     current = trie
     for i in range(n):
         if doc[i] in trie:
             backtracking(i, trie)
     return matches
-
-            
-
-
-
-
 
 
 if __name__ == "__main__":
@@ -74,9 +66,8 @@ if __name__ == "__main__":
         "Person",
         "Officer",
         "Director",
-        "Agents"
+        "Agents",
     ]
-
 
     doc = """
         The operations of each Borrower, and the activities of the officers and directors and, to the knowledge of each Borrower, 
@@ -94,13 +85,12 @@ if __name__ == "__main__":
 
     matches = search_for_terms(terms, doc)
 
-
     # Simple test to ensure bounds of words are calculated properly.
     for match in matches:
         start, end, word = match
-        assert doc[start:end + 1] == word
-
+        assert doc[start : end + 1] == word
 
     from pprint import PrettyPrinter
+
     pp = PrettyPrinter()
     pp.pprint(matches)
